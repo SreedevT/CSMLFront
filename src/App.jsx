@@ -48,6 +48,15 @@ function App() {
         };
     }, []);
 
+    function formatUnixTime(unixTimestamp) {
+        const date = new Date(unixTimestamp * 1000); // Convert Unix timestamp to milliseconds
+        const hours = date.getUTCHours().toString().padStart(2, '0'); // Get hours
+        const minutes = date.getUTCMinutes().toString().padStart(2, '0'); // Get minutes
+        const seconds = date.getUTCSeconds().toString().padStart(2, '0'); // Get seconds
+
+        return `${hours}:${minutes}:${seconds}`;
+    }
+
     if (decibelLevels.length === 0) {
         return <div>Loading...</div>;
     }
@@ -56,7 +65,7 @@ function App() {
         <div>
             <h1>Line Chart with Decibel Levels and Time</h1>
             <LineChart width={600} height={400} data={decibelLevels} margin={{ top: 20, right: 20, left: 20, bottom: 20 }}>
-                <XAxis dataKey="time" type="number" domain={['dataMin', 'dataMax']} label={{ value: 'Time (s)', position: 'bottom' }} />
+                <XAxis dataKey="time" type="number" domain={['dataMin', 'dataMax']} tickFormatter={formatUnixTime} label={{ value: 'Time (s)', position: 'bottom' }} />
                 <YAxis dataKey="level" type="number" domain={['dataMin', 'dataMax']} label={{ value: 'Decibel (dB)', position: 'left', angle: -90 }} />
                 <CartesianGrid strokeDasharray="3" />
                 <Tooltip formatter={(value) => `${value} dB`} />
