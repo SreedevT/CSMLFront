@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react';
 import db from './firebase.config';
 import { collection, getDocs, onSnapshot, query, orderBy} from 'firebase/firestore';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-// import { Line } from 'react-chartjs-2'; // Import the Line component from react-chartjs-2
+import Chart from './components/chart';
 
 function App() {
     // Get a reference to a query that filters by timestamp
     const decibelLevelsRef = collection(db, 'decibel_levels');
-    const levelQuery = query(decibelLevelsRef, orderBy('time', 'asc'));
+    const levelQuery = query(decibelLevelsRef, orderBy('time', 'asc'), );
 
     const [decibelLevels, setDecibelLevels] = useState([{ level: 0, time: 0 }]);
 
@@ -24,7 +23,7 @@ function App() {
     const subscribeToDecibelLevels = () => {
 
         const unsubscribe = onSnapshot(levelQuery, (querySnapshot) => {
-            console.log("This part is working");
+            console.log("Snapshot is working");
             const data = querySnapshot.docs.map(doc => ({ level: doc.data().level, time: doc.data().time }));
             setDecibelLevels(data);
         });
@@ -48,15 +47,6 @@ function App() {
         };
     }, []);
 
-    function formatUnixTime(unixTimestamp) {
-        const date = new Date(unixTimestamp * 1000); // Convert Unix timestamp to milliseconds
-        const hours = date.getUTCHours().toString().padStart(2, '0'); // Get hours
-        const minutes = date.getUTCMinutes().toString().padStart(2, '0'); // Get minutes
-        const seconds = date.getUTCSeconds().toString().padStart(2, '0'); // Get seconds
-
-        return `${hours}:${minutes}:${seconds}`;
-    }
-
     if (decibelLevels.length === 0) {
         return <div>Loading...</div>;
     }
@@ -64,14 +54,8 @@ function App() {
     return (
         <div>
             <h1>Line Chart with Decibel Levels and Time</h1>
-            <LineChart width={600} height={400} data={decibelLevels} margin={{ top: 20, right: 20, left: 20, bottom: 20 }}>
-                <XAxis dataKey="time" type="number" domain={['dataMin', 'dataMax']} tickFormatter={formatUnixTime} label={{ value: 'Time (s)', position: 'bottom' }} />
-                <YAxis dataKey="level" type="number" domain={['dataMin', 'dataMax']} label={{ value: 'Decibel (dB)', position: 'left', angle: -90 }} />
-                <CartesianGrid strokeDasharray="3" />
-                <Tooltip formatter={(value) => `${value} dB`} />
-                <Legend />
-                <Line type="monotone" dataKey="level" stroke="#8884d8" activeDot={{ r: 8 }} />
-            </LineChart>
+
+            <Chart data={decibelLevels} />
         </div>
     );
 }
