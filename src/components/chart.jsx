@@ -4,11 +4,7 @@ import { LineChart, XAxis, YAxis, CartesianGrid, Tooltip, Line } from 'recharts'
 
 function formatUnixTime(unixTimestamp) {
     const date = new Date(unixTimestamp * 1000); // Convert Unix timestamp to milliseconds
-    const hours = date.getUTCHours().toString().padStart(2, '0'); // Get hours
-    const minutes = date.getUTCMinutes().toString().padStart(2, '0'); // Get minutes
-    const seconds = date.getUTCSeconds().toString().padStart(2, '0'); // Get seconds
-
-    return `${hours}:${minutes}:${seconds}`;
+    return date.toLocaleTimeString(); // Get hours & minutes
 }
 
 function Chart({data}) {
