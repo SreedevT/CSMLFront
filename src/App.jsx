@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { db } from './firebase.config';
-import { collection, getDocs, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { collection, getDocs, onSnapshot, query, orderBy, limit } from 'firebase/firestore';
 import Chart from './components/chart';
 
 function App() {
@@ -26,11 +26,12 @@ function App() {
 
     // Define a function to listen for real-time updates
     const subscribeToDecibelLevels = () => {
+        const limitQuery = query(decibelLevelsRef, orderBy('timestamp', 'desc'), limit(1));
 
-        const unsubscribe = onSnapshot(levelQuery, (querySnapshot) => {
+        const unsubscribe = onSnapshot(limitQuery, (querySnapshot) => {
             console.log("Snapshot is working");
             const data = querySnapshot.docs.map(doc => ({ level: parseInt(doc.data().data), time: parseInt(doc.data().timestamp) }));
-            setDecibelLevels(data);
+            setDecibelLevels(decibelLevels => [...decibelLevels, data[0]]);
             console.log("Decibels in subscribe: ", decibelLevels);
 
         });
