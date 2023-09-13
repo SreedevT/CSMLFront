@@ -12,12 +12,13 @@ function TestApp() {
 
     // const filterDataByDate = (data, startDate) => {
     //     const startTimestamp = startDate.getTime();
-    //     return data.filter(entry => entry.time >= startTimestamp);
+    //     console.log("TEST Start Timestamp: ", startTimestamp);
+    //     return data.filter(entry => entry.timestamp >= startTimestamp);
     // };
 
     const fetchDecibelLevels = async () => {
         await getDocs(levelQuery).then((querySnapshot) => {
-            const data = querySnapshot.docs.map(doc => ({ level: doc.data().level, time: doc.data().time }));
+            const data = querySnapshot.docs.map(doc => ({ level: doc.data().data, time: doc.data().timestamp }));
             setDecibelLevels(data);
 
             console.log("TEST Decibels: ", data);
@@ -29,9 +30,9 @@ function TestApp() {
 
         const unsubscribe = onSnapshot(levelQuery, (querySnapshot) => {
             console.log("TEST Snapshot is working");
-            const data = querySnapshot.docs.map(doc => ({ level: parseInt(doc.data().level), time: parseInt(doc.data().time) }));
+            const data = querySnapshot.docs.map(doc => ({ level: doc.data().data, time: doc.data().timestamp }));
             setDecibelLevels(data);
-            console.log("TEST Decibels in subscribe: ", data);
+            console.log("TEST Decibels in subscribe: ", decibelLevels);
 
         });
 
