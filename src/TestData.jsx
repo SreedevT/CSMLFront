@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { db } from './firebase.config';
+import { dbTest } from './firebase.config';
 import { collection, getDocs, onSnapshot, query, orderBy } from 'firebase/firestore';
 import Chart from './components/chart';
 
-function App() {
+function TestApp() {
     // Get a reference to a query that filters by timestamp
-    const decibelLevelsRef = collection(db, 'noise/sensor_data/mlG83Q7Wk6Zr8l7fijgDqf3SxcV2');
+    const decibelLevelsRef = collection(dbTest, 'decibel_levels');
     const levelQuery = query(decibelLevelsRef, orderBy('timestamp', 'asc'),);
 
     const [decibelLevels, setDecibelLevels] = useState([{ level: 0, time: 0 }]);
@@ -17,10 +17,10 @@ function App() {
 
     const fetchDecibelLevels = async () => {
         await getDocs(levelQuery).then((querySnapshot) => {
-            const data = querySnapshot.docs.map(doc => ({ level: parseInt(doc.data().data), time: parseInt(doc.data().timestamp) }));
+            const data = querySnapshot.docs.map(doc => ({ level: doc.data().level, time: doc.data().time }));
             setDecibelLevels(data);
 
-            console.log("Decibels: ", data);
+            console.log("TEST Decibels: ", data);
         });
     };
 
@@ -28,10 +28,10 @@ function App() {
     const subscribeToDecibelLevels = () => {
 
         const unsubscribe = onSnapshot(levelQuery, (querySnapshot) => {
-            console.log("Snapshot is working");
-            const data = querySnapshot.docs.map(doc => ({ level: parseInt(doc.data().data), time: parseInt(doc.data().timestamp) }));
+            console.log("TEST Snapshot is working");
+            const data = querySnapshot.docs.map(doc => ({ level: parseInt(doc.data().level), time: parseInt(doc.data().time) }));
             setDecibelLevels(data);
-            console.log("Decibels in subscribe: ", decibelLevels);
+            console.log("TEST Decibels in subscribe: ", data);
 
         });
 
@@ -60,11 +60,11 @@ function App() {
     // Render the Line component with the formatted data and some options
     return (
         <div>
-            <h1 className='text-3xl font-bold text-white'>Line Chart with Decibel Levels and Time</h1>
+            <h1>Line Chart with Decibel Levels and Time</h1>
 
             <Chart data={decibelLevels} />
         </div>
     );
 }
 
-export default App;
+export default TestApp;
